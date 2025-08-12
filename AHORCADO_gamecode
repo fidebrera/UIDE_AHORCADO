@@ -1,0 +1,223 @@
+import random # Importamos el módulo 'random' para seleccionar una palabra aleatoria
+
+# La clase RepositorioDePalabras maneja la fuente de datos para el juego.
+# En este caso, es una lista de palabras predefinidas.
+class RepositorioDePalabras:
+    """
+    Gestiona la selección de la palabra secreta para el juego.
+    """
+    def __init__(self):
+        # Lista de palabras para el juego. Se pueden agregar más.
+        self.palabras = ["PYTHON", "PROGRAMACION", "INGENIERIA", "SOFTWARE", "COMPUTADORA"]
+
+    def obtener_palabra_aleatoria(self):
+        """
+        Selecciona una palabra al azar de la lista.
+        
+        DIAGRAMA DE FLUJO:
+        1. Iniciar.
+        2. Obtener la lista de palabras.
+        3. Seleccionar una palabra de la lista de forma aleatoria.
+        4. Retornar la palabra seleccionada.
+        5. Fin.
+        """
+        return random.choice(self.palabras)
+
+# La clase InterfazDeUsuario se encarga de toda la interacción con el jugador.
+# Su responsabilidad es la capa de presentación.
+class InterfazDeUsuario:
+    """
+    Maneja la entrada y salida de datos del usuario, así como la visualización.
+    """
+    def mostrar_progreso(self, palabra_secreta, letras_adivinadas, intentos_restantes):
+        """
+        Muestra el estado actual del juego al jugador.
+        
+        Args:
+            palabra_secreta (str): La palabra que el jugador debe adivinar.
+            letras_adivinadas (list): Lista de letras que el jugador ha intentado.
+            intentos_restantes (int): Número de intentos restantes.
+        """
+        tablero = ""
+        for letra in palabra_secreta:
+            # Estructura condicional para mostrar la letra si ha sido adivinada,
+            # o un guion bajo si no.
+            if letra in letras_adivinadas:
+                tablero += letra + " "
+            else:
+                tablero += "_ "
+        
+        print("\n" + "-"*30)
+        print("Palabra: " + tablero)
+        print(f"Intentos restantes: {intentos_restantes}")
+        # Se muestra el estado del ahorcado de forma simple con base en los intentos restantes.
+        self._dibujar_ahorcado(intentos_restantes)
+        print("-" * 30)
+
+    def _dibujar_ahorcado(self, intentos_restantes):
+        """
+        Función interna para dibujar el ahorcado en la consola.
+        """
+        etapas = [
+            """
+              +---+
+              |   |
+                  |
+                  |
+                  |
+                  |
+            =========
+            """,
+            """
+              +---+
+              |   |
+              O   |
+                  |
+                  |
+                  |
+            =========
+            """,
+            """
+              +---+
+              |   |
+              O   |
+              |   |
+                  |
+                  |
+            =========
+            """,
+            """
+              +---+
+              |   |
+              O   |
+             /|   |
+                  |
+                  |
+            =========
+            """,
+            """
+              +---+
+              |   |
+              O   |
+             /|\  |
+                  |
+                  |
+            =========
+            """,
+            """
+              +---+
+              |   |
+              O   |
+             /|\  |
+             /    |
+                  |
+            =========
+            """,
+            """
+              +---+
+              |   |
+              O   |
+             /|\  |
+             / \  |
+                  |
+            =========
+            """
+        ]
+        # El índice de la etapa es 6 - intentos_restantes
+        print(etapas[6 - intentos_restantes])
+
+    def solicitar_letra(self):
+        """
+        Solicita al jugador que ingrese una letra.
+        
+        DIAGRAMA DE FLUJO:
+        1. Iniciar.
+        2. Solicitar al usuario que ingrese una letra.
+        3. Validar que la entrada sea una sola letra alfabética.
+        4. Si la entrada es válida, retornar la letra en mayúsculas.
+        5. Si no es válida, volver al paso 2.
+        6. Fin.
+        """
+        while True:
+            letra = input("Ingresa una letra: ").upper()
+            # Validamos que la entrada sea una sola letra alfabética.
+            if len(letra) == 1 and letra.isalpha():
+                return letra
+            else:
+                print("Entrada inválida. Por favor, ingresa una sola letra.")
+
+# La clase GestorDeJuego es el componente principal que gestiona la lógica de negocio.
+# Su responsabilidad es la capa de lógica de negocio.
+class GestorDeJuego:
+    """
+    Controla la lógica central del juego del ahorcado.
+    """
+    def __init__(self):
+        self.repositorio = RepositorioDePalabras()
+        self.interfaz = InterfazDeUsuario()
+        self.palabra_secreta = ""
+        self.letras_adivinadas = []
+        self.intentos_restantes = 0
+    
+    def iniciar_juego(self):
+        """
+        Prepara y ejecuta el ciclo principal del juego.
+        """
+        print("¡Bienvenido al Juego del Ahorcado!")
+        self.palabra_secreta = self.repositorio.obtener_palabra_aleatoria()
+        self.letras_adivinadas = []
+        self.intentos_restantes = 6
+        
+        # Bucle principal del juego. Estructura repetitiva `while`.
+        # Se repite mientras queden intentos y la palabra no haya sido adivinada.
+        while self.intentos_restantes > 0 and not self._palabra_adivinada():
+            self.interfaz.mostrar_progreso(self.palabra_secreta, self.letras_adivinadas, self.intentos_restantes)
+            letra = self.interfaz.solicitar_letra()
+            
+            # Se usa una estructura condicional para evitar intentos duplicados.
+            if letra in self.letras_adivinadas:
+                print("Ya intentaste con esa letra. Intenta con otra.")
+                continue
+            
+            self.letras_adivinadas.append(letra)
+            
+            # Estructura condicional para verificar si la letra es correcta o incorrecta.
+            if letra not in self.palabra_secreta:
+                self.intentos_restantes -= 1
+                print(f"Letra incorrecta. Te quedan {self.intentos_restantes} intentos.")
+            else:
+                print("¡Correcto!")
+                
+        self._finalizar_juego()
+
+    def _palabra_adivinada(self):
+        """
+        Verifica si el jugador ha adivinado toda la palabra.
+        
+        DIAGRAMA DE FLUJO:
+        1. Iniciar.
+        2. Iterar sobre cada letra de la palabra secreta.
+        3. Si alguna letra no está en la lista de letras adivinadas, la palabra no ha sido adivinada. Retornar False.
+        4. Si se completa la iteración sin encontrar letras faltantes, retornar True.
+        5. Fin.
+        """
+        for letra in self.palabra_secreta:
+            if letra not in self.letras_adivinadas:
+                return False
+        return True
+
+    def _finalizar_juego(self):
+        """
+        Muestra el mensaje final del juego (victoria o derrota).
+        """
+        self.interfaz.mostrar_progreso(self.palabra_secreta, self.letras_adivinadas, self.intentos_restantes)
+        # Estructura condicional para determinar el resultado final.
+        if self._palabra_adivinada():
+            print("¡Felicidades! Adivinaste la palabra.")
+        else:
+            print(f"¡Has perdido! La palabra secreta era: {self.palabra_secreta}")
+
+# Bloque principal para ejecutar el juego.
+if __name__ == "__main__":
+    juego = GestorDeJuego()
+    juego.iniciar_juego()
