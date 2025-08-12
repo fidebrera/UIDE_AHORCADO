@@ -1,0 +1,79 @@
+# Este script representa los diagramas de flujo del juego del ahorcado
+# codificando la lógica paso a paso usando funciones y estructuras de control.
+
+import random
+
+# ----- DIAGRAMA DE FLUJO: SELECCIONAR PALABRA ALEATORIA -----
+# Función que simula el diagrama de flujo para obtener una palabra.
+def flowchart_obtener_palabra_aleatoria():
+    print("--- DIAGRAMA DE FLUJO: Obtener Palabra Aleatoria ---")
+    print("1. INICIO")
+    print("2. Definir una lista de palabras disponibles.")
+    palabras = ["PYTHON", "PROGRAMACION", "INGENIERIA", "SOFTWARE", "COMPUTADORA"]
+    print("3. Seleccionar una palabra al azar de la lista.")
+    palabra_seleccionada = random.choice(palabras)
+    print(f"   -> La palabra seleccionada es: {palabra_seleccionada}")
+    print("4. Retornar la palabra seleccionada.")
+    print("5. FIN")
+    return palabra_seleccionada
+
+# ----- DIAGRAMA DE FLUJO: SOLICITAR LETRA -----
+# Función que simula el diagrama de flujo para solicitar una letra al jugador.
+def flowchart_solicitar_letra():
+    print("\n--- DIAGRAMA DE FLUJO: Solicitar Letra ---")
+    print("1. INICIO")
+    valido = False
+    # La estructura repetitiva 'while' representa el bucle de validación del diagrama de flujo.
+    while not valido:
+        print("2. Solicitar al jugador que ingrese una letra.")
+        entrada = input("   -> Ingrese una letra: ").upper()
+        # La estructura condicional 'if/else' representa la toma de decisión en el diagrama.
+        if len(entrada) == 1 and entrada.isalpha():
+            print("3. La entrada es una sola letra alfabética. Se considera VÁLIDA.")
+            valido = True
+            print("4. Retornar la letra validada.")
+        else:
+            print("3. La entrada NO es válida.")
+            print("   -> Mostrar mensaje de error al usuario.")
+            print("   -> Volver a solicitar la entrada (bucle).")
+    print("5. FIN")
+    return entrada
+
+# ----- DIAGRAMA DE FLUJO: VERIFICAR SI LA PALABRA FUE ADIVINADA -----
+# Función que simula el diagrama de flujo para verificar el estado de la palabra.
+def flowchart_palabra_adivinada(palabra_secreta, letras_adivinadas):
+    print("\n--- DIAGRAMA DE FLUJO: ¿Palabra Adivinada? ---")
+    print("1. INICIO")
+    # La estructura repetitiva 'for' representa la iteración sobre cada letra de la palabra.
+    print(f"2. Iterar sobre cada letra de la palabra secreta: '{palabra_secreta}'.")
+    for letra in palabra_secreta:
+        # La estructura condicional 'if' representa el rombo de decisión en el diagrama.
+        if letra not in letras_adivinadas:
+            print(f"   -> La letra '{letra}' no ha sido adivinada.")
+            print("3. Retornar 'False' (la palabra no ha sido adivinada).")
+            print("4. FIN")
+            return False
+    print("3. Todas las letras han sido adivinadas.")
+    print("4. Retornar 'True' (la palabra ha sido adivinada).")
+    print("5. FIN")
+    return True
+
+# Bloque principal para demostrar los diagramas de flujo.
+if __name__ == "__main__":
+    print("-------------------------------------------------------")
+    print("DEMOSTRACIÓN DE DIAGRAMAS DE FLUJO CODIFICADOS EN PYTHON")
+    print("-------------------------------------------------------")
+    
+    # Demostración del primer diagrama de flujo.
+    palabra = flowchart_obtener_palabra_aleatoria()
+    
+    # Demostración del segundo diagrama de flujo.
+    letra_jugador = flowchart_solicitar_letra()
+    
+    # Demostración del tercer diagrama de flujo con un caso de prueba.
+    letras_de_prueba = ['P', 'R', 'O', 'G', 'A']
+    print(f"\nCaso de prueba para el diagrama de '¿Palabra Adivinada?'")
+    print(f"   Palabra secreta: '{palabra}'")
+    print(f"   Letras adivinadas: {letras_de_prueba}")
+    resultado = flowchart_palabra_adivinada(palabra, letras_de_prueba)
+    print(f"Resultado final: {resultado}")
